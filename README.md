@@ -3,7 +3,9 @@
 [![NPM Version](https://img.shields.io/npm/v/solid-web-client.svg?style=flat)](https://npm.im/solid-web-client)
 [![Build Status](https://travis-ci.org/solid/solid-web-client.svg?branch=master)](https://travis-ci.org/solid/solid-web-client)
 
-[Solid](https://github.com/solid/solid) LDP REST client.
+Minimal [Solid](https://github.com/solid/solid) LDP REST client functionality.
+Serves as a standalone library, and is also used inside
+[`solid-client`](https://github.com/solid/solid-client).
 
 ## Usage
 
