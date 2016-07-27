@@ -326,4 +326,21 @@ SolidWebClient.prototype.solidRequest =
     })
   }
 
-module.exports = SolidWebClient
+/**
+ * Returns a web client instance (convenience constructor method).
+ * Usage:
+ *
+ *   ```
+ *   var rdf = require('rdflib')  // or other compatible library
+ *   var webClient = require('solid-web-client')(rdf)
+ *   ```
+ * @param rdf
+ * @param config
+ * @returns {SolidWebClient}
+ */
+function getClient (rdf, config) {
+  return new SolidWebClient(rdf, config)
+}
+
+module.exports = getClient
+module.exports.SolidWebClient = SolidWebClient
