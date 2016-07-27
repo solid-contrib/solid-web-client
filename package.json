@@ -2,7 +2,7 @@
   "name": "solid-web-client",
   "version": "0.0.1",
   "description": "Solid LDP REST client",
-  "main": "./index.js",
+  "main": "./src/client.js",
   "files": [
     "index.js",
     "config.js",
@@ -36,7 +36,6 @@
   },
   "homepage": "https://github.com/solid/solid-web-client",
   "dependencies": {
-    "shorthash": "0.0.2",
     "solid-namespace": "0.0.1",
     "standard-http-error": "^2.0.0",
     "xhr2": "^0.1.3"
