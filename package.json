@@ -1,6 +1,9 @@
 {
   "name": "solid-web-client",
   "version": "0.0.1",
+  "engines": {
+    "node": "^6.0"
+  },
   "description": "Solid LDP REST client",
   "main": "./src/client.js",
   "files": [
