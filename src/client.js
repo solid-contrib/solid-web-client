@@ -8,9 +8,9 @@ var DEFAULT_MIME_TYPE = 'text/turtle'
 var defaultConfig = require('../config-default')
 
 var composePatchQuery = require('./util/web-util').composePatchQuery
-var SolidResponse = require('./src/models/response')
-var SolidContainer = require('./src/models/container')
-var XMLHttpRequest = require('./src/util/xhr')
+var SolidResponse = require('./models/response')
+var SolidContainer = require('./models/container')
+var XMLHttpRequest = require('./util/xhr')
 var HttpError = require('standard-http-error')
 var vocab = require('solid-namespace')
 
