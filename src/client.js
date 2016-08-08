@@ -109,11 +109,12 @@ SolidWebClient.prototype.del = function del (url) {
  * Retrieves a resource or container by making an HTTP GET call.
  * @method get
  * @param url {String} URL of the resource or container to fetch
- * @param [options] Options hashmap (see `solidRequest()` docs)
+ * @param [options={}] Options hashmap (see `solidRequest()` docs)
  * @return {Promise<SolidResponse|SolidContainer>|Object} Result of the HTTP
  *   GET operation, or an error object
  */
-SolidWebClient.prototype.get = function get (url, options) {
+SolidWebClient.prototype.get = function get (url, options = {}) {
+  options.headers = options.headers || {}
   // If no explicit Accept: header specified, set one
   if (!options.headers['Accept']) {
     options.headers['Accept'] = DEFAULT_ACCEPT
