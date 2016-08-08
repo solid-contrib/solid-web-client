@@ -113,7 +113,7 @@ function SolidResponse (rdf, xhrResponse, method) {
    * @property types
    * @type Array<String>
    */
-  this.types = this.linkHeaders.type || []
+  this.types = this.typeLinkHeaders()
   /**
    * URL of the resource created or retrieved
    * @property url
@@ -265,4 +265,16 @@ SolidResponse.prototype.raw = function raw () {
   } else {
     return null
   }
+}
+
+/**
+ * Returns a unique (de-duplicated) list of `rel="type"` Link headers.
+ * @return {Array}
+ */
+SolidResponse.prototype.typeLinkHeaders = function typeLinkHeaders () {
+  if (!Array.isArray(this.linkHeaders.type)) {
+    return []
+  }
+  var types = new Set(this.linkHeaders.type || [])
+  return Array.from(types)
 }
