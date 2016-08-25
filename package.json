@@ -13,13 +13,14 @@
     "src"
   ],
   "scripts": {
-    "babel": "babel src/ --out-dir lib/",
-    "build": "npm run test",
+    "build": "babel src -d lib",
     "clean": "rm -rf lib/",
-    "prepublish": "npm run build",
     "standard": "standard src/*",
     "tape": "tape test/unit/*.js",
-    "test": "npm run standard && npm run clean && npm run babel && npm run tape"
+    "test": "npm run standard && npm run tape",
+    "preversion": "npm test",
+    "postversion": "git push --follow-tags",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
+    "babel-preset-es2015": "^6.14.0",
     "blue-tape": "^0.2.0",
     "rdflib": "^0.9.0",
     "standard": "^5.4.1",
