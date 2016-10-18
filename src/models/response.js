@@ -148,10 +148,9 @@ function SolidResponse (rdf, xhrResponse, method) {
  */
 SolidResponse.prototype.aclAbsoluteUrl = function aclAbsoluteUrl () {
   if (!this.acl) {
-    return this.acl
+    return null
   }
-  var aclAbsoluteUrl = webUtil.absoluteUrl(this.url, this.acl)
-  return aclAbsoluteUrl
+  return this.resolveMetaOrAclUrl('acl')
 }
 
 /**
@@ -212,10 +211,9 @@ SolidResponse.prototype.isType = function isType (rdfClass) {
  */
 SolidResponse.prototype.metaAbsoluteUrl = function metaAbsoluteUrl () {
   if (!this.meta) {
-    return this.meta
+    return null
   }
-  var metaAbsoluteUrl = webUtil.absoluteUrl(this.url, this.meta)
-  return metaAbsoluteUrl
+  return this.resolveMetaOrAclUrl('meta')
 }
 
 /**
@@ -266,6 +264,22 @@ SolidResponse.prototype.raw = function raw () {
     return null
   }
 }
+
+/**
+ * Returns the absolute url of a "related" resource (.acl or .meta)
+ * @param propertyName {string} Either 'acl' or 'meta'
+ * @return {string}
+ */
+SolidResponse.prototype.resolveMetaOrAclUrl =
+  function resolveMetaOrAclUrl (propertyName) {
+    if (!this.url) {
+      return null
+    }
+    let metaOrAclUrl = this[propertyName]
+    // if url is https://example.com/resource, parent is https://example.com/
+    let parentUrl = this.url.slice(0, this.url.lastIndexOf('/') + 1)
+    return webUtil.absoluteUrl(parentUrl, metaOrAclUrl)
+  }
 
 /**
  * Returns a unique (de-duplicated) list of `rel="type"` Link headers.
