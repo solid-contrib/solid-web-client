@@ -147,8 +147,8 @@ function SolidResponse (rdf, xhrResponse, method) {
  * @return {String}
  */
 SolidResponse.prototype.aclAbsoluteUrl = function aclAbsoluteUrl () {
-  if (!this.acl || !this.url) {
-    return undefined
+  if (!this.acl) {
+    return null
   }
   // if url is https://example.com/resource, parent is https://example.com/
   let parentUrl = this.url.slice(0, this.url.lastIndexOf('/') + 1)
@@ -213,8 +213,8 @@ SolidResponse.prototype.isType = function isType (rdfClass) {
  * @return {String}
  */
 SolidResponse.prototype.metaAbsoluteUrl = function metaAbsoluteUrl () {
-  if (!this.meta || !this.url) {
-    return undefined
+  if (!this.meta) {
+    return null
   }
   // if url is https://example.com/resource, parent is https://example.com/
   let parentUrl = this.url.slice(0, this.url.lastIndexOf('/') + 1)
