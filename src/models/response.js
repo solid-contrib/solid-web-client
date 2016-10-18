@@ -147,10 +147,12 @@ function SolidResponse (rdf, xhrResponse, method) {
  * @return {String}
  */
 SolidResponse.prototype.aclAbsoluteUrl = function aclAbsoluteUrl () {
-  if (!this.acl) {
-    return this.acl
+  if (!this.acl || !this.url) {
+    return undefined
   }
-  var aclAbsoluteUrl = webUtil.absoluteUrl(this.url, this.acl)
+  // if url is https://example.com/resource, parent is https://example.com/
+  let parentUrl = this.url.slice(0, this.url.lastIndexOf('/') + 1)
+  var aclAbsoluteUrl = webUtil.absoluteUrl(parentUrl, this.acl)
   return aclAbsoluteUrl
 }
 
@@ -214,7 +216,9 @@ SolidResponse.prototype.metaAbsoluteUrl = function metaAbsoluteUrl () {
   if (!this.meta) {
     return this.meta
   }
-  var metaAbsoluteUrl = webUtil.absoluteUrl(this.url, this.meta)
+  // if url is https://example.com/resource, parent is https://example.com/
+  let parentUrl = this.url.slice(0, this.url.lastIndexOf('/') + 1)
+  var metaAbsoluteUrl = webUtil.absoluteUrl(parentUrl, this.meta)
   return metaAbsoluteUrl
 }
 

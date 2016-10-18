@@ -13,9 +13,46 @@ test('empty SolidResponse test', function (t) {
   t.end()
 })
 
-// test('SolidResponse user.isLoggedIn test', function (t) {
-//   t.plan(1)
-//   let response = new SolidResponse()
-//   response.user = 'https://localhost/profile/card#me'
-//   t.ok(response.isLoggedIn(), 'User should be logged in if they have the user string set')
-// })
+test('SolidResponse aclAbsoluteUrl() test', t => {
+  let response = new SolidResponse()
+  t.notOk(response.aclAbsoluteUrl(),
+    'aclAbsoluteUrl() for an empty/new response should be null')
+
+  response = new SolidResponse()
+  response.url = 'https://example.com/resource1'
+  response.acl = 'resource1.acl'
+  t.equal(response.aclAbsoluteUrl(), 'https://example.com/resource1.acl')
+
+  response = new SolidResponse()
+  response.url = 'https://example.com/resource1'
+  response.acl = 'https://example.com/resource1.acl'
+  t.equal(response.aclAbsoluteUrl(), 'https://example.com/resource1.acl')
+
+  response = new SolidResponse()
+  response.url = 'https://example.com/'
+  response.acl = '.acl'
+  t.equal(response.aclAbsoluteUrl(), 'https://example.com/.acl')
+  t.end()
+})
+
+test('SolidResponse metaAbsoluteUrl() test', t => {
+  let response = new SolidResponse()
+  t.notOk(response.metaAbsoluteUrl(),
+    'metaAbsoluteUrl() for an empty/new response should be null')
+
+  response = new SolidResponse()
+  response.url = 'https://example.com/resource1'
+  response.meta = 'resource1.meta'
+  t.equal(response.metaAbsoluteUrl(), 'https://example.com/resource1.meta')
+
+  response = new SolidResponse()
+  response.url = 'https://example.com/resource1'
+  response.meta = 'https://example.com/resource1.meta'
+  t.equal(response.metaAbsoluteUrl(), 'https://example.com/resource1.meta')
+
+  response = new SolidResponse()
+  response.url = 'https://example.com/'
+  response.meta = '.meta'
+  t.equal(response.metaAbsoluteUrl(), 'https://example.com/.meta')
+  t.end()
+})
