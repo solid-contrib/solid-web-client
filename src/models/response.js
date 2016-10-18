@@ -213,8 +213,8 @@ SolidResponse.prototype.isType = function isType (rdfClass) {
  * @return {String}
  */
 SolidResponse.prototype.metaAbsoluteUrl = function metaAbsoluteUrl () {
-  if (!this.meta) {
-    return this.meta
+  if (!this.meta || !this.url) {
+    return undefined
   }
   // if url is https://example.com/resource, parent is https://example.com/
   let parentUrl = this.url.slice(0, this.url.lastIndexOf('/') + 1)
