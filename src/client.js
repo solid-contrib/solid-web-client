@@ -144,8 +144,10 @@ SolidWebClient.prototype.loadParsedGraphs =
   function loadParsedGraphs (locations, options) {
     var web = this
     var loadPromises = locations.map(function (location) {
+      var responseUrl // may differ from location if redirected
       return web.get(location, options)
         .then(function (response) {
+          responseUrl = response.url
           return response.parsedGraph()
         })
         .catch(function () {
@@ -154,7 +156,7 @@ SolidWebClient.prototype.loadParsedGraphs =
         })
         .then(function (parsedGraph) {
           return {
-            uri: location,
+            uri: responseUrl,
             value: parsedGraph
           }
         })
