@@ -76,3 +76,20 @@ test('SolidResonse full IRI based on Location header', t => {
   t.equal(response.url, 'https://foo.example/dan')
   t.end()
 })
+
+test('SolidResonse ignore parameter in Content-Type header', t => {
+  let stub = sinon.stub()
+  stub.withArgs('Link').returns(null)
+  let xhr = { getResponseHeader: stub }
+  let response
+
+  stub.withArgs('Content-Type').returns('text/turtle')
+  response = new SolidResponse(null, xhr, 'POST')
+  t.equal(response.contentType(), 'text/turtle')
+
+  stub.withArgs('Content-Type').returns('text/turtle; charset=UTF-8')
+  response = new SolidResponse(null, xhr, 'POST')
+  t.equal(response.contentType(), 'text/turtle')
+
+  t.end()
+})

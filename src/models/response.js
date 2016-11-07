@@ -163,7 +163,7 @@ SolidResponse.prototype.aclAbsoluteUrl = function aclAbsoluteUrl () {
  */
 SolidResponse.prototype.contentType = function contentType () {
   if (this.xhr) {
-    return this.xhr.getResponseHeader('Content-Type')
+    return this.xhr.getResponseHeader('Content-Type').split(';')[0] // remove parameter
   } else {
     return null
   }
