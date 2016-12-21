@@ -19,11 +19,13 @@ var vocab = require('solid-namespace')
  * @constructor
  * @param rdf {RDF} RDF library (like rdflib.js or rdf-ext) for parsing
  * @param [config] {Object} Config hashmap
+ * @param [config.auth] {ClientAuthOIDC} Solid OIDC auth client instance
  */
-function SolidWebClient (rdf, config) {
+function SolidWebClient (rdf, config = {}) {
   this.rdf = rdf
   this.vocab = vocab(rdf)
-  this.config = config || defaultConfig
+  this.config = Object.assign(defaultConfig, config)
+  this.auth = config.auth
 }
 
 /**
@@ -269,6 +271,9 @@ SolidWebClient.prototype.solidRequest =
   function solidRequest (url, method, options, data) {
     options = options || {}
     options.headers = options.headers || {}
+    if (this.auth && this.auth.accessToken) {
+      options.headers['Authorization'] = 'Bearer ' + this.auth.accessToken
+    }
     options.proxyUrl = options.proxyUrl || this.config.proxyUrl
     options.timeout = options.timeout || this.config.timeout
     if (this.needsProxy(url) || options.forceProxy) {
