@@ -163,4 +163,3 @@ SolidResource.prototype.isContainer = function isContainer () {
 SolidContainer.prototype.isEmpty = function isEmpty () {
   return this.contentsUris.length === 0
 }
-

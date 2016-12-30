@@ -119,7 +119,9 @@ function SolidResponse (rdf, xhrResponse, method) {
    * @property url
    * @type String
    */
-  this.url = xhrResponse.getResponseHeader('Location') || xhrResponse.responseURL
+  this.url = xhrResponse.getResponseHeader('Location')
+    ? webUtil.absoluteUrl(webUtil.hostname(xhrResponse.responseURL), xhrResponse.getResponseHeader('Location'))
+    : xhrResponse.responseURL
   /**
    * WebID URL of the currently authenticated user (empty string if none)
    * @property user

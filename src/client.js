@@ -78,7 +78,7 @@ SolidWebClient.prototype.createResponse =
   function createResponse (xhrResponse, method) {
     var response = new SolidResponse(this.rdf, xhrResponse, method)
     if (response.method === 'get' && response.isContainer()) {
-      return new SolidContainer(this.rdf, response.location, response)
+      return new SolidContainer(this.rdf, response.url, response)
     }
     return response
   }

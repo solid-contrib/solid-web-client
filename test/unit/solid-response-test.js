@@ -1,6 +1,7 @@
 'use strict'
 
 var test = require('tape')
+var sinon = require('sinon')
 var SolidResponse = require('../../src/models/response')
 
 test('empty SolidResponse test', function (t) {
@@ -54,5 +55,24 @@ test('SolidResponse metaAbsoluteUrl() test', t => {
   response.url = 'https://example.com/'
   response.meta = '.meta'
   t.equal(response.metaAbsoluteUrl(), 'https://example.com/.meta')
+  t.end()
+})
+
+test('SolidResonse full IRI based on Location header', t => {
+  let stub = sinon.stub()
+  stub.withArgs('Link').returns(null)
+
+  stub.withArgs('Location').returns('/bar')
+  let xhr = { getResponseHeader: stub, responseURL: 'https://foo.example/' }
+  let response = new SolidResponse(null, xhr, 'POST')
+  t.equal(response.url, 'https://foo.example/bar')
+
+  xhr.responseURL = 'https://foo.example/baz/'
+  response = new SolidResponse(null, xhr, 'POST')
+  t.equal(response.url, 'https://foo.example/bar')
+
+  stub.withArgs('Location').returns('https://foo.example/dan')
+  response = new SolidResponse(null, xhr, 'POST')
+  t.equal(response.url, 'https://foo.example/dan')
   t.end()
 })
