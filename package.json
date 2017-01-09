@@ -45,7 +45,7 @@
   "dependencies": {
     "solid-namespace": "0.0.1",
     "standard-http-error": "^2.0.0",
-    "xhr2": "^0.1.3"
+    "xhr2": "^0.1.4"
   },
   "devDependencies": {
     "babel-cli": "^6.11.4",
