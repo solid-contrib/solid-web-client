@@ -46,24 +46,6 @@ function SolidWebClient (rdf, config) {
 SolidWebClient.prototype.createContainer =
   function createContainer (parentUrl, name, options, data) {
     return this.post(parentUrl, data, name, true)
-    // var newContainerUrl = parentUrl + name
-    // options = options || {}
-    // options.headers = options.headers || {}
-    // options.headers['If-None-Match'] = '*'
-    // var resourceType = vocab.ldp('BasicContainer')
-    // options.headers['Link'] = resourceType + '; rel="type"'
-    // var mimeType = 'text/turtle'
-    // return this.put(newContainerUrl, data, mimeType, options)
-    //  .catch(function (error) {
-    //    if (error instanceof HttpError) {
-    //      if (error.code === HttpError.CONFLICT) {
-    //        error.message = 'A resource with the same name already exists'
-    //      } else if (error.code === HttpError.PRECONDITION_FAILED) {
-    //        error.message = 'A container with the same name already exists'
-    //      }
-    //      throw error
-    //    }
-    //  })
   }
 
 /**
