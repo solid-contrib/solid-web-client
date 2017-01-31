@@ -4,8 +4,10 @@
  */
 module.exports = SolidResponse
 
-var webUtil = require('../util/web-util')
-var graphUtil = require('../util/graph-util')  // Used by .parsedGraph()
+const graphUtil = require('../util/graph-util')  // Used by .parsedGraph()
+const SolidContainer = require('./container')
+const SolidResource = require('./resource')
+const webUtil = require('../util/web-util')
 
 /**
  * Provides a wrapper around an XHR response object, and adds several
@@ -141,6 +143,16 @@ function SolidResponse (rdf, xhrResponse, method) {
    * @type XMLHttpRequest
    */
   this.xhr = xhrResponse
+
+  /**
+   * The resource which was returned by the XHR, if any.
+   */
+  this.resource = null
+  if (this.method === 'get') {
+    this.resource = this.isContainer()
+      ? new SolidContainer(this.rdf, this.url, this)
+      : new SolidResource(this.rdf, this.url, this)
+  }
 }
 
 /**
