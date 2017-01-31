@@ -9,7 +9,6 @@ var defaultConfig = require('../config-default')
 
 var composePatchQuery = require('./util/web-util').composePatchQuery
 var SolidResponse = require('./models/response')
-var SolidContainer = require('./models/container')
 var XMLHttpRequest = require('./util/xhr')
 var HttpError = require('standard-http-error')
 var vocab = require('solid-namespace')
@@ -53,16 +52,11 @@ SolidWebClient.prototype.createContainer =
  * @method createResponse
  * @param xhrResponse {XMLHttpRequest} XHR Response
  * @param method {String} HTTP verb
- * @return {SolidResponse|SolidContainer} Either a SolidResponse or a
- *   SolidContainer instance.
+ * @return {SolidResponse} A SolidResponse
  */
 SolidWebClient.prototype.createResponse =
   function createResponse (xhrResponse, method) {
-    var response = new SolidResponse(this.rdf, xhrResponse, method)
-    if (response.method === 'get' && response.isContainer()) {
-      return new SolidContainer(this.rdf, response.url, response)
-    }
-    return response
+    return new SolidResponse(this.rdf, xhrResponse, method)
   }
 /**
  * Returns the current window's location (for use with `needsProxy()`)
@@ -81,8 +75,8 @@ SolidWebClient.prototype.currentUrl = function currentUrl () {
  * Deletes an existing resource or container.
  * @method del
  * @param url {String} URL of the resource or container to be deleted
- * @return {Promise|Object} Result of the HTTP Delete operation (returns true
- *   on success, or an anonymous error object on failure)
+ * @return {Promise<SolidResponse>} Result of the HTTP Delete operation (returns
+ *   true on success, or an anonymous error object on failure)
  */
 SolidWebClient.prototype.del = function del (url) {
   return this.solidRequest(url, 'DELETE')
@@ -92,7 +86,7 @@ SolidWebClient.prototype.del = function del (url) {
  * @method get
  * @param url {String} URL of the resource or container to fetch
  * @param [options={}] Options hashmap (see `solidRequest()` docs)
- * @return {Promise<SolidResponse|SolidContainer>|Object} Result of the HTTP
+ * @return {Promise<SolidResponse>} Result of the HTTP
  *   GET operation, or an error object
  */
 SolidWebClient.prototype.get = function get (url, options = {}) {
@@ -198,8 +192,8 @@ SolidWebClient.prototype.patch = function patch (url, toDel, toIns, options) {
  *            or Resource?
  * @param mimeType {String} Content Type of the data/payload
  * @method post
- * @return {Promise|Object} Result of XHR POST (returns parsed
- *     response meta object) or an anonymous error object with status code
+ * @return {Promise<SolidResponse>} Result of XHR POST (returns parsed response
+ *     meta object) or an anonymous error object with status code
  */
 SolidWebClient.prototype.post =
   function post (url, data, slug, isContainer, mimeType) {
@@ -240,9 +234,9 @@ SolidWebClient.prototype.proxyUrl = function proxyUrl (url, proxyUrlTemplate) {
  * @param data {Object} Data/payload of the resource to be created or updated
  * @param [mimeType] {String} MIME Type of the resource to be created
  * @param [options] Options hashmap, see docs for `solidResponse()`
- * @return {Promise|Object} Result of PUT operation (returns parsed response
- *     meta object if successful, rejects with an anonymous error status
- *     object if not successful)
+ * @return {Promise<SolidResponse>} Result of PUT operation (returns parsed
+ *     response meta object if successful, rejects with an anonymous error
+ *     status object if not successful)
  */
 SolidWebClient.prototype.put = function put (url, data, mimeType, options) {
   options = options || {}

@@ -3,6 +3,8 @@
  * @module resource
  */
 
+const graphUtil = require('../util/graph-util')
+
 /**
  * Represents a Solid / LDP Resource (currently used when listing
  * SolidContainer resources)
@@ -11,7 +13,7 @@
  */
 module.exports = SolidResource
 
-function SolidResource (uri, response) {
+function SolidResource (rdf, uri, response) {
   /**
    * Short name (page/filename part of the resource path),
    * derived from the URI
@@ -44,12 +46,19 @@ function SolidResource (uri, response) {
    */
   this.uri = uri
 
+  /**
+   * RDF Library (such as rdflib.js) to inject (used for parsing contents)
+   * @type RDF
+   */
+  this.rdf = rdf
+
   if (response) {
     if (response.url !== uri) {
       // Override the given url (which may be relative) with that of the
       // response object (which will be absolute)
       this.uri = response.url
     }
+    this.initFromResponse(response)
   }
   this.initName()
 }
@@ -70,6 +79,21 @@ SolidResource.prototype.initName = function initName () {
     this.name = fragments.pop()
   }
 }
+
+/**
+ * @method initFromResponse
+ * @param response {SolidResponse}
+ */
+SolidResource.prototype.initFromResponse =
+  function initFromResponse (response) {
+    var contentType = response.contentType()
+    if (!contentType) {
+      throw new Error('Cannot parse container without a Content-Type: header')
+    }
+    var parsedGraph = graphUtil.parseGraph(this.rdf, this.uri, response.raw(), contentType)
+    this.parsedGraph = parsedGraph
+    this.types = this.types = Object.keys(parsedGraph.findTypeURIs(this.rdf.namedNode(this.uri)))
+  }
 
 /**
  * Is this a Container instance (vs a regular resource).

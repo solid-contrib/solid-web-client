@@ -18,7 +18,7 @@ var SolidResource = require('./resource')
  */
 function SolidContainer (rdf, uri, response) {
   // Call parent constructor
-  SolidResource.call(this, uri, response)
+  SolidResource.call(this, rdf, uri, response)
   /**
    * Hashmap of Containers within this container, keyed by absolute uri
    * @property containers
@@ -31,11 +31,6 @@ function SolidContainer (rdf, uri, response) {
    * @type Array<String>
    */
   this.contentsUris = []
-  /**
-   * RDF Library (such as rdflib.js) to inject (used for parsing contents)
-   * @type RDF
-   */
-  this.rdf = rdf
   /**
    * Hashmap of Contents that are just resources (not containers),
    * keyed by absolute uri
@@ -50,8 +45,8 @@ function SolidContainer (rdf, uri, response) {
    */
   this.vocab = vocab(rdf)
 
-  if (response) {
-    this.initFromResponse(this.uri, response)
+  if (this.parsedGraph) {
+    this.appendFromGraph(this.parsedGraph, this.uri)
   }
 }
 // SolidContainer.prototype object inherits from SolidResource.prototype
@@ -95,7 +90,7 @@ SolidContainer.prototype.appendFromGraph =
       isContainer = link in self.containers
       isResource = link !== self.uri && !isContainer
       if (isResource) {
-        resource = new SolidResource(link)
+        resource = new SolidResource(self.rdf, link)
         linkNode = self.rdf.namedNode(link)
         resource.types = Object.keys(parsedGraph.findTypeURIs(linkNode))
         self.resources[link] = resource
@@ -129,23 +124,6 @@ SolidContainer.prototype.findByType = function findByType (rdfClass) {
   }
   return matches
 }
-
-/**
- * @method initFromResponse
- * @param uri {String}
- * @param response {SolidResponse}
- */
-SolidContainer.prototype.initFromResponse =
-  function initFromResponse (uri, response) {
-    var contentType = response.contentType()
-    if (!contentType) {
-      throw new Error('Cannot parse container without a Content-Type: header')
-    }
-    var parsedGraph = graphUtil.parseGraph(this.rdf, uri, response.raw(),
-      contentType)
-    this.parsedGraph = parsedGraph
-    this.appendFromGraph(parsedGraph, uri)
-  }
 
 /**
  * Is this a Container instance (vs a regular resource).
