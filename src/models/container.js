@@ -2,7 +2,6 @@
 /**
  * @module container
  */
-module.exports = SolidContainer
 var graphUtil = require('../util/graph-util')
 var parseLinks = graphUtil.parseLinks
 var vocab = require('solid-namespace')
@@ -13,131 +12,134 @@ var SolidResource = require('./resource')
  * @extends SolidResource
  * @constructor
  * @param rdf {RDF} RDF Library (such as rdflib.js) to inject
- * @param uri {String}
+ * @param uri {string}
  * @param response {SolidResponse}
  */
-function SolidContainer (rdf, uri, response) {
-  // Call parent constructor
-  SolidResource.call(this, rdf, uri, response)
-  /**
-   * Hashmap of Containers within this container, keyed by absolute uri
-   * @property containers
-   * @type Object
-   */
-  this.containers = {}
-  /**
-   * List of URIs of all contents (containers and resources)
-   * @property contentsUris
-   * @type Array<String>
-   */
-  this.contentsUris = []
-  /**
-   * Hashmap of Contents that are just resources (not containers),
-   * keyed by absolute uri
-   * @property resources
-   * @type Object
-   */
-  this.resources = {}
+class SolidContainer extends SolidResource {
+  constructor (rdf, uri, response) {
+    super(rdf, uri, response)
+    /**
+     * Hashmap of Containers within this container, keyed by absolute uri
+     * @property containers
+     * @type Object
+     */
+    this.containers = {}
+    /**
+     * List of URIs of all contents (containers and resources)
+     * @property contentsUris
+     * @type Array<string>
+     */
+    this.contentsUris = []
+    /**
+     * Hashmap of Contents that are just resources (not containers),
+     * keyed by absolute uri
+     * @property resources
+     * @type Object
+     */
+    this.resources = {}
 
-  /**
-   * Hashmap of common RDF ontology namespaces
-   * @type Object
-   */
-  this.vocab = vocab(rdf)
+    /**
+     * Hashmap of common RDF ontology namespaces
+     * @type Object
+     */
+    this.vocab = vocab(rdf)
 
-  if (this.parsedGraph) {
-    this.appendFromGraph(this.parsedGraph, this.uri)
+    if (this.parsedGraph) {
+      this.appendFromGraph(this.parsedGraph, this.uri)
+    }
   }
-}
-// SolidContainer.prototype object inherits from SolidResource.prototype
-SolidContainer.prototype = Object.create(SolidResource.prototype)
-SolidContainer.prototype.constructor = SolidContainer
 
-/**
- * Extracts the contents (resources and sub-containers)
- * of the given graph and adds them to this container
- * @method appendFromGraph
- * @param parsedGraph {Graph}
- * @param graphUri {String}
- */
-SolidContainer.prototype.appendFromGraph =
-  function appendFromGraph (parsedGraph, graphUri) {
+  /**
+   * Extracts the contents (resources and sub-containers)
+   * of the given graph and adds them to this container
+   *
+   * @method appendFromGraph
+   * @param parsedGraph {Graph}
+   * @param graphUri {string}
+   */
+  appendFromGraph (parsedGraph, graphUri) {
     // Set this container's types
-    var uriNode = this.rdf.namedNode(this.uri)
+    let ns = this.vocab
+    let uriNode = this.rdf.namedNode(this.uri)
     this.types = Object.keys(parsedGraph.findTypeURIs(uriNode))
 
     // Extract all the contents links (resources and containers)
-    var contentsUris = parseLinks(parsedGraph, null, this.vocab.ldp('contains'))
+    let contentsUris = parseLinks(parsedGraph, null, ns.ldp('contains'))
     this.contentsUris = this.contentsUris.concat(contentsUris.sort())
 
     // Extract links that are just containers
-    var containersLinks = parsedGraph.each(null, null,
-      this.vocab.ldp('Container'))
-    var self = this
-    var container
-    containersLinks.forEach(function (containerLink) {
+    let containersLinks = parsedGraph.each(null, null, ns.ldp('Container'))
+
+    let container
+    containersLinks.forEach((containerLink) => {
       // Filter out . (the link to this directory)
-      if (containerLink.uri !== self.uri) {
-        container = new SolidContainer(self.rdf, containerLink.uri)
+      if (containerLink.uri !== this.uri) {
+        container = new SolidContainer(this.rdf, containerLink.uri)
         container.types = Object.keys(parsedGraph.findTypeURIs(containerLink))
-        self.containers[container.uri] = container
+        this.containers[container.uri] = container
       }
     })
+
     // Now that containers are defined, all the rest are non-container resources
-    var isResource, isContainer
-    var resource, linkNode
-    contentsUris.forEach(function (link) {
-      isContainer = link in self.containers
-      isResource = link !== self.uri && !isContainer
+    let isResource, isContainer
+    let resource, linkNode
+    contentsUris.forEach((link) => {
+      isContainer = link in this.containers
+      isResource = link !== this.uri && !isContainer
       if (isResource) {
-        resource = new SolidResource(self.rdf, link)
-        linkNode = self.rdf.namedNode(link)
+        resource = new SolidResource(this.rdf, link)
+        linkNode = this.rdf.namedNode(link)
         resource.types = Object.keys(parsedGraph.findTypeURIs(linkNode))
-        self.resources[link] = resource
+        this.resources[link] = resource
       }
     })
   }
 
-/**
- * Returns a list of SolidResource or SolidContainer instances that match
- * a given type.
- * @method findByType
- * @param rdfClass {String}
- * @return {Array<SolidResource|SolidContainer>}
- */
-SolidContainer.prototype.findByType = function findByType (rdfClass) {
-  var matches = []
-  var key
-  var container
-  for (key in this.containers) {
-    container = this.containers[key]
-    if (container.isType(rdfClass)) {
-      matches.push(container)
+  /**
+   * Returns a list of SolidResource or SolidContainer instances that match
+   * a given type.
+   * @method findByType
+   * @param rdfClass {string}
+   * @return {Array<SolidResource|SolidContainer>}
+   */
+  findByType (rdfClass) {
+    let matches = []
+    let key, container
+
+    for (key in this.containers) {
+      container = this.containers[key]
+      if (container.isType(rdfClass)) {
+        matches.push(container)
+      }
     }
-  }
-  var resource
-  for (key in this.resources) {
-    resource = this.resources[key]
-    if (resource.isType(rdfClass)) {
-      matches.push(resource)
+
+    let resource
+    for (key in this.resources) {
+      resource = this.resources[key]
+      if (resource.isType(rdfClass)) {
+        matches.push(resource)
+      }
     }
+
+    return matches
   }
-  return matches
+
+  /**
+   * Is this a Container instance (vs a regular resource).
+   * @return {Boolean}
+   */
+  isContainer () {
+    return true
+  }
+
+  /**
+   * Returns true if there are no resources or containers inside this container.
+   * @method isEmpty
+   * @return {Boolean}
+   */
+  isEmpty () {
+    return this.contentsUris.length === 0
+  }
 }
 
-/**
- * Is this a Container instance (vs a regular resource).
- * @return {Boolean}
- */
-SolidResource.prototype.isContainer = function isContainer () {
-  return true
-}
-
-/**
- * Returns true if there are no resources or containers inside this container.
- * @method isEmpty
- * @return {Boolean}
- */
-SolidContainer.prototype.isEmpty = function isEmpty () {
-  return this.contentsUris.length === 0
-}
+module.exports = SolidContainer
