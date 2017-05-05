@@ -52,14 +52,14 @@ function composePatchQuery (toDel, toIns) {
     toDel = toDel.map(function (st) {
       return statementToNT(st, excludeDot)
     })
-    query += 'DELETE DATA { ' + toDel.join(' . ') + ' };\n'
+    query += 'DELETE DATA { ' + toDel.join(' . ') + ' . };\n'
   }
 
   if (toIns && toIns.length > 0) {
     toIns = toIns.map(function (st) {
       return statementToNT(st, excludeDot)
     })
-    query += 'INSERT DATA { ' + toIns.join(' . ') + ' };\n'
+    query += 'INSERT DATA { ' + toIns.join(' . ') + ' . };\n'
   }
 
   return query
