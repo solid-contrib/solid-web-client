@@ -317,6 +317,8 @@ class SolidWebClient {
       url = this.proxyUrl(url)
     }
 
+    const client = this
+
     return new Promise((resolve, reject) => {
       let http = new XMLHttpRequest()
 
@@ -335,7 +337,7 @@ class SolidWebClient {
 
       http.onload = function () {
         if (this.status >= 200 && this.status < 300) {
-          resolve(this.createResponse(this, method))
+          resolve(client.createResponse(this, method))
         } else {
           reject(new HttpError(this.status, this.statusText, { xhr: this }))
         }
