@@ -46,20 +46,18 @@ function absoluteUrl (baseUrl, pathUrl) {
  */
 function composePatchQuery (toDel, toIns) {
   let query = ''
-  let excludeDot = true
-
   if (toDel && toDel.length > 0) {
     toDel = toDel.map(function (st) {
-      return statementToNT(st, excludeDot)
+      return statementToNT(st)
     })
-    query += 'DELETE DATA { ' + toDel.join(' . ') + ' . };\n'
+    query += 'DELETE DATA { ' + toDel.join(' ') + ' };\n'
   }
 
   if (toIns && toIns.length > 0) {
     toIns = toIns.map(function (st) {
-      return statementToNT(st, excludeDot)
+      return statementToNT(st)
     })
-    query += 'INSERT DATA { ' + toIns.join(' . ') + ' . };\n'
+    query += 'INSERT DATA { ' + toIns.join(' ') + ' };\n'
   }
 
   return query
@@ -174,8 +172,7 @@ function parseLinkHeader (link) {
 }
 
 /**
- * Converts a statement to string (if it isn't already), optionally slices off
- * the period at the end, and returns the statement.
+ * Converts a statement to string (if it isn't already) and returns the statement.
  * @method statementToNT
  *
  * @param statement {string|Triple} RDF Statement to be converted.
@@ -183,14 +180,10 @@ function parseLinkHeader (link) {
  *
  * @return {string}
  */
-function statementToNT (statement, excludeDot) {
+function statementToNT (statement) {
   if (typeof statement !== 'string') {
     // This is an RDF Statement. Convert to string
     statement = statement.toCanonical()
-  }
-
-  if (excludeDot && statement.endsWith('.')) {
-    statement = statement.slice(0, -1)
   }
 
   return statement

@@ -4,10 +4,16 @@ var test = require('tape')
 var webUtil = require('../../src/util/web-util')
 
 test('web-util.composePatchQuery() test', function (t) {
-  let toDelLinks = ['triple1', 'triple2', 'triple3']
-  let toAddLinks = ['triple4', 'triple5', 'triple6']
-  let expectedQuery = 'DELETE DATA { triple1 . triple2 . triple3 . };\n' +
-    'INSERT DATA { triple4 . triple5 . triple6 . };\n'
+  let toDelLinks = [
+    'ex:subj ex:pred "one".',
+    'ex:subj ex:pred "two".'
+  ]
+  let toAddLinks = [
+    'ex:subj ex:pred "three".',
+    'ex:subj ex:pred "four".'
+  ]
+  let expectedQuery = 'DELETE DATA { ex:subj ex:pred "one". ex:subj ex:pred "two". };\n' +
+    'INSERT DATA { ex:subj ex:pred "three". ex:subj ex:pred "four". };\n'
   t.equal(
     webUtil.composePatchQuery(toDelLinks, toAddLinks),
     expectedQuery
@@ -17,8 +23,8 @@ test('web-util.composePatchQuery() test', function (t) {
 
 test('web-util.composePatchQuery() - single statement', function (t) {
   let toDelLinks = []
-  let toAddLinks = ['triple1']
-  let expectedQuery = 'INSERT DATA { triple1 . };\n'
+  let toAddLinks = ['ex:subj ex:pred "one".']
+  let expectedQuery = 'INSERT DATA { ex:subj ex:pred "one". };\n'
   t.equal(
     webUtil.composePatchQuery(toDelLinks, toAddLinks),
     expectedQuery
